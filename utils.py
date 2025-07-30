@@ -10,8 +10,13 @@ def dataframe_to_instruments(dataframe) -> dict[str, Instrument]: # chave: ticke
     
     Return list of Instrument objects
     """
-    pass
+    dicio = {}
+    for each_ticker in dataframe.columns: 
+        key = 'each_ticker'
+        value = Instrument(ticker=each_ticker)
+        dicio[key] = value
 
+    return dicio
     """
     response = {}
     for ticker in dataframe:
@@ -21,6 +26,26 @@ def dataframe_to_instruments(dataframe) -> dict[str, Instrument]: # chave: ticke
     
     return response
     """
+
+def dataframe_to_prices(dataframe, ticker) -> dict[datetime.datetime, float]: 
+    """ 
+    Given a dataframe and a ticker return a dic where key: date(Ex.: '2025-02-03'), value: closing price
+    
+    Args:
+        dataframe: dataframe of pandas containing the prices of a instrument
+
+        ticker: string of a given ticker
+    Return dict of dates and prices
+    
+    """
+
+    dicio = {}
+    for index in dataframe.index:
+        key = index
+        value = dataframe.loc[index, ticker]
+        dicio[key] = value
+
+    return dicio
 
 def portfolio_var_by_instrument(
     portfolio: Portfolio, 
