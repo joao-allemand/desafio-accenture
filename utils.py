@@ -1,5 +1,7 @@
 from objects import Instrument, Portfolio, VarMask
-
+import datetime
+from scipy.stats import norm
+import numpy as np
 
 def dataframe_to_instruments(dataframe) -> dict[str, Instrument]: # chave: ticker, valor: Objeto instrumento referente ao ticker
     """
@@ -8,44 +10,20 @@ def dataframe_to_instruments(dataframe) -> dict[str, Instrument]: # chave: ticke
     Args:
         dataframe: dataframe of pandas containing the prices of a instrument
     
-    Return list of Instrument objects
-    """
-    dicio = {}
-    for each_ticker in dataframe.columns: 
-        key = 'each_ticker'
-        value = Instrument(ticker=each_ticker)
-        dicio[key] = value
-
-    return dicio
+    Return a dictionary of Instrument objects
     """
     response = {}
-    for ticker in dataframe:
-        prices_ticker = dataframe[ticker]
-        instrument = Instrument(ticker=ticker, prices=prices_ticker)
+    for ticker in dataframe.columns: 
+        price_by_date = {}
+        for date in dataframe.index:
+            price = dataframe.loc[date, ticker]
+            price_by_date[date.date()] = price
+        instrument = Instrument(ticker=ticker, prices=price_by_date)
         response[ticker] = instrument
-    
-    return response
-    """
 
-def dataframe_to_prices(dataframe, ticker) -> dict[datetime.datetime, float]: 
-    """ 
-    Given a dataframe and a ticker return a dic where key: date(Ex.: '2025-02-03'), value: closing price
-    
-    Args:
-        dataframe: dataframe of pandas containing the prices of a instrument
+    return  response
+  
 
-        ticker: string of a given ticker
-    Return dict of dates and prices
-    
-    """
-
-    dicio = {}
-    for index in dataframe.index:
-        key = index
-        value = dataframe.loc[index, ticker]
-        dicio[key] = value
-
-    return dicio
 
 def portfolio_var_by_instrument(
     portfolio: Portfolio, 
@@ -55,7 +33,8 @@ def portfolio_var_by_instrument(
 
     # Dada uma carteira, calcula o car de cada ativo (instrumento) na carteira. -> Dict[ticker, float(valor do instrumento)]
 
-    # Dois dicionarios, Dict[ticker, Dict[datetime.datime, float(valor do instrumento)]]
+    # Dois  responsenarios, Dict[ticker, Dict[datetime.datime, float(valor do instrumento)]]
+    z_score = norm.ppf(float(mask.confidence_level))
 
     '''
     VaR = Z-Score x Std Dev x Amt. Invested
@@ -76,24 +55,32 @@ def portfolio_var_by_instrument(
     return
 
 
-def corr_ativos():
-    # Dados os ativos de uma carteira calcula a correlação entre eles.
+
+
+
+def corr_instruments(retorno_portfolio): # 
+    """
+    Given the array of daily returns of a portfolio, returns the covariance matrix of the instruments
+    """
+    
     return
 
-def vol_carteira():
-    # Dada uma carteira, calcula a volatilidade da mesma.
-    return
 
 
-def vol_ativo():
-    # Dado um ativo, calcula a volatilidade do mesmo.
-    # Observe que a volatilidade de um ativo é o desvio-padrão do mesmo.
-    return
 
+def vol_instrument(instrument:Instrument) -> dict[str, float]: # key: 'ticker', value: volatility of the instrument
+    """
+    Given an instrument, returns an dicionary with the ticker and the volatiliy.
+    Observe que a volatilidade de um ativo é o desvio-padrão dos retornos do mesmo."""
+
+    daily_vol = np.std(instrument.returns) 
+    return {instrument.ticker: daily_vol} 
+
+def vol_portfolio():
+    """""Dada uma carteira, calcula a volatilidade da mesma."""
+
+    return 
 
 def var_carteira():
 
-    # Dada uma carteira, calcula o var da carteira.
-    # Chama a função (var_ativo_carteira) que calcula o var por ativo (instrumento)
-    # Chama a função (vol_ativo) que é o desvio padrão usado no calculo do var
     return
