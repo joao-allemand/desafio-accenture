@@ -64,9 +64,9 @@ def var_by_instrument(
 
 
 
-def corr_instruments(retorno_portfolio): # 
+def corr_instruments(portfolio:Portfolio) -> dict[list, float]: # key: list of tickers, value: correlation 
     """
-    Given the array of daily returns of a portfolio, returns the covariance matrix of the instruments
+    Given a portfolio, returns the covariance matrix of the instruments
     """
     
     return
@@ -85,23 +85,33 @@ def vol_instrument(instrument:Instrument) -> dict[str, float]: # key: 'ticker', 
 
     return {instrument.ticker: annualized} 
 
-def vol_portfolio(portfolio:Portfolio) -> float:
+def vol_portfolio(portfolio:Portfolio) -> list:
     """
-    Given a portfolio, returns it's volatility.
+    Given a portfolio, returns a list with it's volatility of 6 months and of 1 year.
+
+    [vol_6months,annualized]
 
     """
 
-    daily_vol = np.std(portfolio.return_portfolio)
+    daily_vol = np.std(portfolio.return_portfolio(), ddof=1) # Std Dev amostral
+
+    vol_6months = np.sqrt(126)*daily_vol
 
     annualized = np.sqrt(252)*daily_vol
 
-    return annualized
+    return [vol_6months,annualized]
 
 def var_carteira(portfolio: Portfolio, mask: VarMask) -> float:
     """
-    Estamos partindo da premissa que açoes sao seus proprios fatores de risco.
-    Dessa forma o var da carteira é o somatorio do explodido.
+    Given a portfolio and a Var mask, returns the 
     """
-    var = sum(var_by_instrument(portfolio, mask).values())
+
+    z_score = norm.ppf(float(mask.confidence_level))
+
+    vol = vol_portfolio(portfolio)[0]
+
+    amt_inv = list(portfolio.value_portfolio().values())[-1]
+
+    var = z_score * vol * amt_inv
 
     return var
