@@ -60,9 +60,6 @@ class Portfolio: # posicoes: {'PETR4': 3, 'VALE3': 15, ...}
         somatorio para todos os instrumentos de (preço instrumento tempo t-1  *  quantidade do instrumento)
         """
         
-        
-
-
         list_dates = list(self.instruments[list(self.instruments.keys())[0]].prices.keys())
         array_soma = np.zeros_like(list_dates, dtype=float)
 
