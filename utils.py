@@ -3,7 +3,7 @@ import datetime
 from scipy.stats import norm
 import numpy as np
 import pandas as pd
-
+import random
 
 def dataframe_to_instruments(dataframe) -> dict[str, Instrument]: # chave: ticker, valor: Objeto instrumento referente ao ticker
     """
@@ -25,6 +25,14 @@ def dataframe_to_instruments(dataframe) -> dict[str, Instrument]: # chave: ticke
 
     return  response
   
+def portfolio_generator(seed, ativos:list):
+    random.seed(seed)
+    quantidade_de_cada_ativo = {}
+    for ticker in ativos:
+        quant = random.randint(0,1000) # quantidade de cada ativo da carteira 
+        quantidade_de_cada_ativo[ticker] = quant
+
+    return quantidade_de_cada_ativo
 
 
 def var_by_instrument(
@@ -80,22 +88,24 @@ def corr_instruments(portfolio:Portfolio) -> pd.DataFrame:
     return corr
 
 
-def vol_instrument(instrument:Instrument) -> dict[str, float]: # key: 'ticker', value: volatility of the instrument
+def vol_instrument(portfolio:Portfolio) -> dict[str, float]: # key: 'ticker', value: volatility of the instrument
     """
     Given an instrument, returns an dicionary with the ticker and the volatiliy.
     Observe que a volatilidade de um ativo é o desvio-padrão dos retornos do mesmo."""
-
-    daily_vol = np.std(instrument.returns) 
+    response = {}
+    for ticker in portfolio.instruments.keys():
+        daily_vol = np.std(portfolio.instruments[ticker].returns) 
     
-    annualized = np.sqrt(252)*daily_vol # annualized volatility considering a period of a year 
+        annualized = np.sqrt(252)*daily_vol # annualized volatility considering a period of a year 
+        response[ticker] = annualized
+    return response 
 
-    return {instrument.ticker: annualized} 
-
-def vol_portfolio(portfolio:Portfolio) -> list:
+def vol_portfolio(portfolio:Portfolio) -> dict[str, float]:
     """
     Given a portfolio, returns a list with it's volatility of 6 months and of 1 year.
 
-    [vol_6months,annualized]
+    Returns:
+        dict[str, float] 
 
     """
 
@@ -105,7 +115,7 @@ def vol_portfolio(portfolio:Portfolio) -> list:
 
     annualized = np.sqrt(252)*daily_vol
 
-    return [vol_6months,annualized]
+    return {'vol em 6 meses': vol_6months,'vol anualizado': annualized}
 
 def var_carteira(portfolio: Portfolio, mask: VarMask) -> float:
     """
@@ -114,7 +124,7 @@ def var_carteira(portfolio: Portfolio, mask: VarMask) -> float:
 
     z_score = norm.ppf(float(mask.confidence_level))
 
-    vol = vol_portfolio(portfolio)[0]
+    vol = vol_portfolio(portfolio)['vol em 6 meses']
 
     amt_inv = list(portfolio.value_portfolio().values())[-1]
 
