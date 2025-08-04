@@ -179,4 +179,4 @@ def plot_component_var(pct_contrib:pd.Series):
 
     plt.tight_layout()
     plt.show()
-    return fig
+    return 
