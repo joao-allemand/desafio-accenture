@@ -32,9 +32,9 @@ Projeto separado em arquivos, onde:
 
 ## Fórmulas
 
-1. Retorno Diário:  $\;\;\; r_t = \frac{P_t}{P_{t-1}} - 1$
+1. Retorno Diário:  $ r_t = \frac{P_t}{P_{t-1}} - 1$
 
-2. Retorno Portifólio: $\;\; r_{p,t} = \sum_i w_{i,t-1} \, r_{i,t}
+2. Retorno Portifólio: $ r_{p,t} = \sum_i w_{i,t-1} \, r_{i,t}
 = \sum_i \frac{P_{i,t-1} \, q_i}{V_{p,t-1}} \left( \frac{P_{i,t}}{P_{i,t-1}} - 1 \right)$
 
 3. Volatilidade do instrumento (diária): $\sigma_{i,\text{daily}} =  Std Dev(r_t)$
@@ -61,27 +61,26 @@ Ao somar \(T\) dias independentes a variância total é:
 
 Para os 252 dias de pregão.
 
-4. Volatilidade do instrumento (anualizada): 
-$\;\; \sigma_{i,\text{anual}} = \sqrt{252} \cdot \sigma_{i,\text{daily}} $
+4. Volatilidade do instrumento (anualizada): $\sigma_{i,\text{anual}} = \sqrt{252} \cdot \sigma_{i,\text{daily}} $
 
 
-5. Volatilidade do Portifólio (anualizada): $\;\; \sigma_{port,\text{anual}} = \sqrt{252} \cdot  Std Dev(r_{p,t})$
+5. Volatilidade do Portifólio (anualizada): $\sigma_{port,\text{anual}} = \sqrt{252} \cdot  Std Dev(r_{p,t})$
 
-6. Var do instrumento: $\;\;{VaR}_i = z \cdot \sigma_i \cdot A_i$
+6. Var do instrumento: ${VaR}_i = z \cdot \sigma_i \cdot A_i$
 
 7. Var do Portfólio: 
-$\;\;
+$
 \text{VaR}_{\text{portifólio}} = z \cdot \sigma_{port} \cdot V_p
 $
 
 8. Marginal Var: 
-    $\;\;
+    $
 \text{mVaR}_i
 = z \cdot \sqrt{h} \cdot \frac{(\Sigma \mathbf{w})_i}{\sigma_p} \cdot V_p
 $
 
 9. Component Var: 
-$\;\;
+$
 \text{CompVaR}_i = w_i \cdot \text{mVaR}_i
 $
 
