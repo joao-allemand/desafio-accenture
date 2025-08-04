@@ -64,7 +64,7 @@ def plot_price_series(
 import plotly.graph_objects as go
 import numpy as np
 
-def plot_daily_return_series_interactive(portfolio, normalize: bool = False):
+def plot_daily_return(portfolio, normalize: bool = False):
     """
     Plota os retornos diários de todos os instrumentos do portfólio.
     Se normalize=True, converte os retornos diários em retorno acumulado (%).
@@ -146,7 +146,7 @@ def plot_heatmap_corr(portfolio:Portfolio):
     return
 
 
-def plot_decompose_var(pct_contrib:pd.Series):
+def plot_component_var(pct_contrib:pd.Series):
     """
     Plota um gráfico de barras verticais da contribuição percentual (component VaR) de cada ativo.
     """

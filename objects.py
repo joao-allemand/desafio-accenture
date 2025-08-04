@@ -1,5 +1,7 @@
 import datetime
 import numpy as np
+
+
 class VarMask:
     def __init__(
         self,
@@ -52,6 +54,19 @@ class Portfolio: # posicoes: {'PETR4': 3, 'VALE3': 15, ...}
         self.quantities_dict = quantities_dict
         self.instruments = instruments
         self.pl = self.value_portfolio # pl é patrimônio líquido == valor do portifolio
+
+    def __str__(self):
+        """
+        Apresentação do Portifolio.
+        """
+        response = "O Portfolio tem:\n----------------------------------------------------------"
+        for ticker in self.quantities_dict.keys(): 
+            posicao = self.quantities_dict[ticker] * list(self.instruments[ticker].prices.values())[-1]
+            ticker_str = f"""\n{ticker}: {self.quantities_dict[ticker]} papéis. Com posição R${posicao}\n----------------------------------------------------------"""
+            response += ticker_str
+
+        return response
+
 
 
     def value_portfolio(self) -> dict[datetime.datetime, float]:

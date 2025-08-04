@@ -2,6 +2,8 @@ from objects import Instrument, Portfolio, VarMask
 import datetime
 from scipy.stats import norm
 import numpy as np
+import pandas as pd
+
 
 def dataframe_to_instruments(dataframe) -> dict[str, Instrument]: # chave: ticker, valor: Objeto instrumento referente ao ticker
     """
@@ -61,17 +63,21 @@ def var_by_instrument(
     return response
 
 
-
-
-
-def corr_instruments(portfolio:Portfolio) -> dict[list, float]: # key: list of tickers, value: correlation 
+def corr_instruments(portfolio:Portfolio) -> pd.DataFrame: 
     """
-    Given a portfolio, returns the covariance matrix of the instruments
+    Given a portfolio, returns a pandas dataframe with the covariance matrix of its instruments.
     """
-    
-    return
+    # montando um dataframe a partir dos retornos
+    data = {}
+    for ticker, inst in portfolio.instruments.items():
+        rets = inst.return_by_instrument()  
+        data[ticker] = rets
 
+    df = pd.DataFrame(data) 
 
+    corr = df.corr()
+
+    return corr
 
 
 def vol_instrument(instrument:Instrument) -> dict[str, float]: # key: 'ticker', value: volatility of the instrument
@@ -115,3 +121,52 @@ def var_carteira(portfolio: Portfolio, mask: VarMask) -> float:
     var = z_score * vol * amt_inv
 
     return var
+
+def component_var(portfolio:Portfolio, mask:VarMask):
+    """
+    Calcula o impacto de cada instrumento no var do portfolio.
+    """
+
+    days = mask.time_horizon 
+
+    z_score = norm.ppf(float(mask.confidence_level))
+
+    valor_carteira = list(portfolio.value_portfolio().values())[-1]
+
+    # montando um dataframe de retornos diarios para facilitar contas
+    data = {}
+    for ticker, inst in portfolio.instruments.items():
+        rets = inst.return_by_instrument()  # array de retornos simples
+        data[ticker] = rets
+    returns_df = pd.DataFrame(data)
+
+    weight_vals = {}
+    for ticker in portfolio.instruments.keys():
+        last_price = list(portfolio.instruments[ticker].prices.values())[-1]
+        qty = portfolio.quantities_dict.get(ticker, 0)
+        weight_vals[ticker] = last_price * qty
+
+    w_series = pd.Series(weight_vals)
+    w_series = w_series / w_series.sum()  # normalizando
+    w = w_series.to_numpy()
+
+    cov = returns_df.cov()
+    
+    sigma_p_daily = np.sqrt(w @ cov.to_numpy() @ w)
+
+    Sigma_w = cov.to_numpy() @ w 
+
+    mvar_vals = z_score * np.sqrt(days) * (Sigma_w / sigma_p_daily) * valor_carteira
+
+    mvar = pd.Series(mvar_vals, index=returns_df.columns) # marginal Var
+
+    comp_var = w_series * mvar # component Var
+
+    var_total = z_score * np.sqrt(days) * sigma_p_daily * valor_carteira
+
+    pct_contrib_series = comp_var / var_total # contribuição percentual
+
+    return (mvar.to_dict(),
+        comp_var.to_dict(),
+        pct_contrib_series.to_dict())
+
