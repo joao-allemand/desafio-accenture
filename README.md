@@ -32,57 +32,36 @@ Projeto separado em arquivos, onde:
 
 ## Fórmulas
 
-1. Retorno Diário:  $ r_t = \frac{P_t}{P_{t-1}} - 1$
 
-2. Retorno Portifólio: $ r_{p,t} = \sum_i w_{i,t-1} \, r_{i,t}
-= \sum_i \frac{P_{i,t-1} \, q_i}{V_{p,t-1}} \left( \frac{P_{i,t}}{P_{i,t-1}} - 1 \right)$
-
-3. Volatilidade do instrumento (diária): $\sigma_{i,\text{daily}} =  Std Dev(r_t)$
-
-#### Anualização da Volatilidade
-
-Ao somar \(T\) dias independentes a variância total é:
-   $$
-   \mathrm{Var}\Bigl(\sum_{t=1}^{T} r_t\Bigr)
-   \;=\;
-   T \times \sigma^2.
-   $$
-
-
-   $$
-   \sigma_{T}
-   \;=\;
-   \sqrt{\mathrm{Var}(r_1 + \dots + r_T)}
-   \;=\;
-   \sqrt{T \times \sigma^2}
-   \;=\;
-   \sqrt{T}\;\sigma.
-   $$
-
-Para os 252 dias de pregão.
-
-4. Volatilidade do instrumento (anualizada): $\sigma_{i,\text{anual}} = \sqrt{252} \cdot \sigma_{i,\text{daily}} $
+| Símbolo | Definição |
+|--------|-----------|
+| $r_t$ | Retorno simples do ativo entre os dias $t-1$ e $t$: $r_t = \dfrac{P_t}{P_{t-1}} - 1$. |
+| $P_t$ | Preço do ativo no tempo $t$ (fechamento ajustado). |
+| $r_{p,t}$ | Retorno da carteira no tempo $t$: $r_{p,t} = \sum_i w_{i,t-1} r_{i,t} = \sum_i \dfrac{P_{i,t-1} q_i}{V_{p,t-1}} \left( \dfrac{P_{i,t}}{P_{i,t-1}} - 1 \right)$. |
+| $w_{i,t-1}$ | Peso do ativo $i$ no dia $t-1$: $w_{i,t-1} = \dfrac{P_{i,t-1} q_i}{V_{p,t-1}}$. |
+| $q_i$ | Quantidade do ativo $i$ detida. |
+| $V_{p,t-1}$ | Valor da carteira no tempo $t-1$: $V_{p,t-1} = \sum_j P_{j,t-1} q_j$. |
+| $\sigma_{i,\text{daily}}$ | Volatilidade diária do ativo $i$: $\sqrt{\mathrm{Var}(r_{i,t})}$. |
+| $T$ | Número de dias agregados. |
+| $\sigma$ | Volatilidade de um período sob independência. |
+| $\sigma_T$ | Volatilidade em $T$ dias: $\sqrt{T}\,\sigma$. |
+| $\sigma_{i,\text{anual}}$ | Volatilidade anualizada do ativo $i$: $\sqrt{252}\,\sigma_{i,\text{daily}}$. |
+| $\sigma_{port,\text{anual}}$ | Volatilidade anualizada da carteira: $\sqrt{252}\,\mathrm{StdDev}(r_{p,t})$. |
+| $\alpha$ | Nível de confiança para o VaR. |
+| $z$ | Quantil da normal padrão: $z = \Phi^{-1}(\alpha)$. |
+| $A_i$ | Valor investido no ativo $i$: $q_i \cdot P_{i,\text{último}}$. |
+| $\mathrm{VaR}_i$ | VaR do ativo $i$: $z \cdot \sigma_i \cdot A_i$. |
+| $\mathrm{VaR}_{\text{portfólio}}$ | VaR da carteira: $z \cdot \sigma_{\text{port}} \cdot V_p$. |
+| $h$ | Horizonte em dias úteis. |
+| $\Sigma$ | Matriz de covariância dos retornos diários. |
+| $\mathbf{w}$ | Vetor de pesos da carteira. |
+| $(\Sigma \mathbf{w})_i$ | Entrada $i$ de $\Sigma \mathbf{w}$. |
+| $\sigma_p$ | Volatilidade diária da carteira: $\sqrt{\mathbf{w}^\top \Sigma \mathbf{w}}$. |
+| $\mathrm{mVaR}_i$ | Marginal VaR: $z \sqrt{h} \cdot \dfrac{(\Sigma \mathbf{w})_i}{\sigma_p} \cdot V_p$. |
+| $\mathrm{CompVaR}_i$ | Component VaR: $w_i \cdot \mathrm{mVaR}_i$. |
 
 
-5. Volatilidade do Portifólio (anualizada): $\sigma_{port,\text{anual}} = \sqrt{252} \cdot  Std Dev(r_{p,t})$
 
-6. Var do instrumento: ${VaR}_i = z \cdot \sigma_i \cdot A_i$
-
-7. Var do Portfólio: 
-$
-\text{VaR}_{\text{portifólio}} = z \cdot \sigma_{port} \cdot V_p
-$
-
-8. Marginal Var: 
-    $
-\text{mVaR}_i
-= z \cdot \sqrt{h} \cdot \frac{(\Sigma \mathbf{w})_i}{\sigma_p} \cdot V_p
-$
-
-9. Component Var: 
-$
-\text{CompVaR}_i = w_i \cdot \text{mVaR}_i
-$
 
 ## Como Executar
 
