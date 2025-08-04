@@ -28,6 +28,7 @@ Projeto separado em arquivos, onde:
 - **utils.py** - contém as funções pro funcionamento do código.
 - **graphs.py** - contém as funções de criação de gráficos.
 - **apresentacao.ipynb** - contém a apresentação do projeto, onde serão plotados os gráficos e apresentados os índices.
+- **Testes.ipynb** - arquivo de testes, pode ser ignorado.
 
 ## Fórmulas
 
