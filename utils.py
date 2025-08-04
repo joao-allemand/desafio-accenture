@@ -1,5 +1,4 @@
 from objects import Instrument, Portfolio, VarMask
-import datetime
 from scipy.stats import norm
 import numpy as np
 import pandas as pd
@@ -40,14 +39,7 @@ def var_by_instrument(
     mask: VarMask,
     ) -> dict[str, float]: # key: ticker, value: var of the instrument 
     '''
-    VaR = Z-Score x Std Dev x Amt. Invested
-    where:
-
-    Z-Score is a constant used to determine the confidence level (e.g. 95%, 99%, ...)
-
-    Std Dev measure the positions individual volatility
-
-    Tenho que implementar um looping para calcular o var de cada um dos instrumentos do portfolio
+    Given a portfolio and a VarMask, returns a dictionary with the ticker and the Var of the ticker.
 
     '''
     z_score = norm.ppf(float(mask.confidence_level))
@@ -90,8 +82,8 @@ def corr_instruments(portfolio:Portfolio) -> pd.DataFrame:
 
 def vol_instrument(portfolio:Portfolio) -> dict[str, float]: # key: 'ticker', value: volatility of the instrument
     """
-    Given an instrument, returns an dicionary with the ticker and the volatiliy.
-    Observe que a volatilidade de um ativo é o desvio-padrão dos retornos do mesmo."""
+    Given an portfolio, returns an dicionary with the ticker and the volatiliy.
+    """
     response = {}
     for ticker in portfolio.instruments.keys():
         daily_vol = np.std(portfolio.instruments[ticker].returns) 

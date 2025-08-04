@@ -1,7 +1,6 @@
 import datetime
 import numpy as np
 
-
 class VarMask:
     def __init__(
         self,
@@ -93,10 +92,6 @@ class Portfolio: # posicoes: {'PETR4': 3, 'VALE3': 15, ...}
     def return_portfolio(self):
         """
         Returns an array of daily returns of a portfolio.
-
-        o peso de um instrumento é calculado da seguinte forma: 
-        ((preço do instrumento no tempo t-1)*quantidade do instrumento)/(valor total do portifolio))
-        Vi,t-1 / sum(Vpor,t-1)
         """
         
         sample_returns = list(self.instruments[list(self.instruments.keys())[0]].returns) #pega uma lista com os retornos do primeiro instrumento, para poder criar um array de zeros com a mesma dimensão 
